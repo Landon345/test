@@ -1,0 +1,96 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+namespace Project3
+{
+    public partial class USPopulation : Form
+    {
+        public USPopulation()
+        {
+            InitializeComponent();
+        }
+
+        private void DisplayButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //parallel arrays: populations and years
+                int[] populations = new int[41];
+                int[] years = new int[41];
+                int count = 0;
+                using (StreamReader sr = new StreamReader("C:\\Users\\Landon Schlangen\\Desktop\\USPopulation.txt"))
+
+                {
+                    string line;
+                    // Read and display lines from the file until the end of 
+                    // the file is reached.
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        populations[count] = Int32.Parse(line);
+                        years[count] = (1950 + count);
+                        count++;
+                    }
+                }
+                //find change amomounts
+                int[] changeAmounts = new int[40];
+                for (int i = 0; i<populations.Length-1; i++)
+                {
+                    changeAmounts[i] = populations[i + 1] - populations[i];
+                    
+                }
+
+                //find total amount of change, biggest change amount, and smallest change amount
+                //find the years in which the smallest and largest change amounts ocurred
+                int totalAmountOfChange = 0;
+                int biggestChangeAmount = changeAmounts[0];
+                int smallestChangeAmount = changeAmounts[0];
+                int yearBiggest = 0;
+                int yearSmallest = 0;
+                for (int i = 0; i<changeAmounts.Length; i++)
+                {
+                    if (changeAmounts[i] > biggestChangeAmount)
+                    {
+                        biggestChangeAmount = changeAmounts[i];
+                        yearBiggest = i + 1950;
+                    }
+                    if (changeAmounts[i] < smallestChangeAmount)
+                    {
+                        smallestChangeAmount = changeAmounts[i];
+                        yearSmallest = i + 1950;
+                    }
+
+                    totalAmountOfChange += changeAmounts[i];
+                }
+                
+                
+
+
+                //display data
+                dataListBox.Items.Add("Average change amount: " + (totalAmountOfChange / changeAmounts.Length));
+                dataListBox.Items.Add("Year with the most amount of change: " + yearBiggest + "-" + (yearBiggest+1));
+                dataListBox.Items.Add("Year with the least amount of change: " + yearSmallest + "-" + (yearSmallest+1));
+
+            }
+            catch(FileNotFoundException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+        }
+    }
+}
